@@ -1,22 +1,25 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import TemplateView
+from django.contrib.auth.models import User
+from django.views.generic import TemplateView, CreateView
 from django.shortcuts import render, redirect
+from django.urls import reverse
 
 class LandingView(TemplateView):
     template_name = "website/index.html"
 
 
-def signup(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('home')
-    else:
-        form = UserCreationForm()
-    return render(request, 'website/signup.html', {'form': form})
+class UserCreateView(CreateView):
+    template_name = 'website/signup.html'
+    form_class = UserCreationForm
+    model = User
+
+    def get_context_data(self, **kwargs):
+        context = super(UserCreateView, self).get_context_data(**kwargs)
+        
+        context['message'] = "Welcome"
+        return context
+
+    def get_success_url(self):
+        return reverse('website:signup')
+        

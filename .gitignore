@@ -103,3 +103,4 @@ ENV/
 .env
 .pgdata
 src/pollap/static/*
+src/pollap/apps/*/migrations/0*.py
